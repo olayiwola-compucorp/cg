@@ -1,7 +1,7 @@
-diff --git a/sites/all/modules/contrib/openid_connect_windows_aad/openid_connect_windows_aad.module b/sites/all/modules/contrib/openid_connect_windows_aad/openid_connect_windows_aad.module
+diff --git a/openid_connect_windows_aad.module b/openid_connect_windows_aad.module
 index db0d5de57..f09ae2fb7 100644
---- a/sites/all/modules/contrib/openid_connect_windows_aad/openid_connect_windows_aad.module
-+++ b/sites/all/modules/contrib/openid_connect_windows_aad/openid_connect_windows_aad.module
+--- a/openid_connect_windows_aad.module
++++ b/openid_connect_windows_aad.module
 @@ -31,4 +31,168 @@ function openid_connect_windows_aad_openid_connect_post_authorize($tokens, $acco
        user_save($account, $edit);
      }
@@ -173,10 +173,10 @@ index db0d5de57..f09ae2fb7 100644
 +  $user_data['openid_connect_windows_aad'][$account->uid]['mapped_roles'] = $mapped_roles;
 +  user_save($account);
 +}
-diff --git a/sites/all/modules/contrib/openid_connect_windows_aad/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php b/sites/all/modules/contrib/openid_connect_windows_aad/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
+diff --git a/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php b/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
 index 29c79cc1a..75e9e8a29 100644
---- a/sites/all/modules/contrib/openid_connect_windows_aad/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
-+++ b/sites/all/modules/contrib/openid_connect_windows_aad/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
+--- a/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
++++ b/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
 @@ -28,6 +28,49 @@ class OpenidConnectWindowsAadClient extends OpenIDConnectClientBase {
        '#type' => 'textfield',
        '#default_value' => $this->getSetting('token_endpoint_wa', $default_site . '/oauth2/token'),
