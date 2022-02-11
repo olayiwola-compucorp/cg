@@ -1,28 +1,16 @@
 diff --git a/openid_connect_windows_aad.module b/openid_connect_windows_aad.module
-index db0d5de57..f09ae2fb7 100644
+index 7828f57..976fe9a 100644
 --- a/openid_connect_windows_aad.module
 +++ b/openid_connect_windows_aad.module
-@@ -31,4 +31,168 @@ function openid_connect_windows_aad_openid_connect_post_authorize($tokens, $acco
-       user_save($account, $edit);
-     }
+@@ -13,3 +13,158 @@ function openid_connect_windows_aad_ctools_plugin_directory($module, $plugin) {
+     return "plugins/$plugin";
    }
--}
-\ No newline at end of file
-+
-+  _openid_connect_windows_aad_map_azure_ad_group_to_drupal_roles($account, $userinfo, $client_name);
-+}
+ }
 +
 +/**
-+ * Maps AzureAD group to Drupal roles.
-+ *
-+ * @param object $account
-+ *   The user account that has just been logged in.
-+ * @param array $userinfo
-+ *   The user claims returned by the OpenID Connect provider.
-+ * @param string $client_name
-+ *   The machine name of the OpenID Connect client plugin.
++ * Implements hook_openid_connect_post_authorize().
 + */
-+function _openid_connect_windows_aad_map_azure_ad_group_to_drupal_roles($account, $userinfo, $client_name) {
++function openid_connect_windows_aad_openid_connect_post_authorize($tokens, $account, $userinfo, $client_name, $is_new) {
 +  if ($client_name !== 'windows_aad' || !isset($userinfo['groups'])) {
 +    return;
 +  }
@@ -174,7 +162,7 @@ index db0d5de57..f09ae2fb7 100644
 +  user_save($account);
 +}
 diff --git a/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php b/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
-index 29c79cc1a..75e9e8a29 100644
+index cbf93f5..4f33b3e 100644
 --- a/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
 +++ b/plugins/openid_connect_client/windows_aad/OpenidConnectWindowsAadClient.class.php
 @@ -28,6 +28,49 @@ class OpenidConnectWindowsAadClient extends OpenIDConnectClientBase {
@@ -227,19 +215,20 @@ index 29c79cc1a..75e9e8a29 100644
      $form['userinfo_endpoint_wa'] = array(
        '#title' => t('UserInfo endpoint'),
        '#type' => 'textfield',
-@@ -132,6 +175,11 @@ class OpenidConnectWindowsAadClient extends OpenIDConnectClientBase {
-         $userinfo = $this->buildUserinfo($access_token, $endpoints['userinfo'], 'upn', 'name');
-         break;
-     }
+@@ -135,6 +178,12 @@ class OpenidConnectWindowsAadClient extends OpenIDConnectClientBase {
+ 
+     drupal_alter('openid_connect_windows_aad_userinfo', $userinfo);
+ 
 +    // If AD group to Drupal role mapping has been enabled then attach group
 +    // data from a graph API if configured to do so.
 +    if ($this->getSetting('userinfo_graph_api_wa') && $this->getSetting('map_ad_groups_to_roles')) {
 +      $userinfo['groups'] = $this->retrieveGroupInfo($access_token);
 +    }
- 
-     drupal_alter('openid_connect_windows_aad_userinfo', $userinfo);
- 
-@@ -205,4 +253,49 @@ class OpenidConnectWindowsAadClient extends OpenIDConnectClientBase {
++
+     // Check to see if we have changed email data, openid_connect doesn't
+     // give us the possibility to add a mapping for it, so we do the change
+     // now, first checking if this is wanted by checking the setting for it.
+@@ -216,4 +265,49 @@ class OpenidConnectWindowsAadClient extends OpenIDConnectClientBase {
  
    }
  
